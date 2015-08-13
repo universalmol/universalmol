@@ -79,6 +79,7 @@ const char* GetTxnOutputType(txnouttype t)
     case TX_PUBKEYHASH: return "pubkeyhash";
     case TX_SCRIPTHASH: return "scripthash";
     case TX_MULTISIG: return "multisig";
+    case TX_BURN: return "burn";
     }
     return NULL;
 }
@@ -1138,6 +1139,9 @@ bool Solver(const CScript& scriptPubKey, txnouttype& typeRet, vector<vector<unsi
 
         // Sender provides N pubkeys, receivers provides M signatures
         mTemplates.insert(make_pair(TX_MULTISIG, CScript() << OP_SMALLINTEGER << OP_PUBKEYS << OP_SMALLINTEGER << OP_CHECKMULTISIG));
+        
+        // Unredeemable burn operation
+        mTemplates.insert(make_pair(TX_BURN, CScript() << OP_RETURN));
     }
 
     // Shortcut for pay-to-script-hash, which are more constrained than the other types:
@@ -1285,6 +1289,8 @@ bool Solver(const CKeyStore& keystore, const CScript& scriptPubKey, uint256 hash
     {
     case TX_NONSTANDARD:
         return false;
+    case TX_BURN:
+        return true;
     case TX_PUBKEY:
         keyID = CPubKey(vSolutions[0]).GetID();
         return Sign1(keyID, keystore, hash, nHashType, scriptSigRet);
@@ -1315,6 +1321,8 @@ int ScriptSigArgsExpected(txnouttype t, const std::vector<std::vector<unsigned c
     {
     case TX_NONSTANDARD:
         return -1;
+    case TX_BURN:
+        return 1;
     case TX_PUBKEY:
         return 1;
     case TX_PUBKEYHASH:
@@ -1635,6 +1643,8 @@ static CScript CombineSignatures(CScript scriptPubKey, const CTransaction& txTo,
         if (sigs1.size() >= sigs2.size())
             return PushAll(sigs1);
         return PushAll(sigs2);
+    case TX_BURN:
+        return PushAll(sigs1);
     case TX_PUBKEY:
     case TX_PUBKEYHASH:
         // Signatures are bigger than placeholders or empty scripts:
