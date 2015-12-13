@@ -4,10 +4,14 @@ macx:TARGET = "UniversalMolecule-Qt"
 VERSION = 0.8.15.2
 INCLUDEPATH += src src/json src/qt
 QT += core gui network
-DEFINES += QT_GUI BOOST_THREAD_USE_LIB BOOST_SPIRIT_THREADSAFE BOOST_THREAD_PROVIDES_GENERIC_SHARED_MUTEX_ON_WIN __NO_SYSTEM_INCLUDES
+#DEFINES += QT_GUI BOOST_THREAD_USE_LIB BOOST_SPIRIT_THREADSAFE BOOST_THREAD_PROVIDES_GENERIC_SHARED_MUTEX_ON_WIN __NO_SYSTEM_INCLUDES
+greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+DEFINES += QT_GUI BOOST_THREAD_USE_LIB BOOST_SPIRIT_THREADSAFE
 CONFIG += no_include_pwd
 CONFIG += thread
 CONFIG += static
+
+USE_UPNP:=1
 
 # for boost 1.37, add -mt to the boost libraries
 # use: qmake BOOST_LIB_SUFFIX=-mt
@@ -23,7 +27,7 @@ CONFIG += static
 windows:LIBS += -lshlwapi
 LIBS += $$join(BOOST_LIB_PATH,,-L,) $$join(BDB_LIB_PATH,,-L,) $$join(OPENSSL_LIB_PATH,,-L,) $$join(QRENCODE_LIB_PATH,,-L,)
 LIBS += -lssl -lcrypto -ldb_cxx$$BDB_LIB_SUFFIX
-LIBS += -lboost_system-mgw48-mt-s-1_55 -lboost_filesystem-mgw48-mt-s-1_55 -lboost_program_options-mgw48-mt-s-1_55 -lboost_thread-mgw48-mt-s-1_55
+LIBS += -lboost_system-mgw49-mt-s-1_55 -lboost_filesystem-mgw49-mt-s-1_55 -lboost_program_options-mgw49-mt-s-1_55 -lboost_thread-mgw49-mt-s-1_55
 BOOST_LIB_SUFFIX=-mgw48-mt-s-1_55
 BOOST_INCLUDE_PATH=C:/deps/boost_1_55_0
 BOOST_LIB_PATH=C:/deps/boost_1_55_0/stage/lib
@@ -384,7 +388,7 @@ OTHER_FILES += README.md \
 # platform specific defaults, if not overridden on command line
 isEmpty(BOOST_LIB_SUFFIX) {
     macx:BOOST_LIB_SUFFIX = -mt
-    win32:BOOST_LIB_SUFFIX = -mgw46-mt-sd-1_55
+    win32:BOOST_LIB_SUFFIX = -mgw48-mt-s-1_55
 }
 
 isEmpty(BOOST_THREAD_LIB_SUFFIX) {
