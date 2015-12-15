@@ -1,7 +1,7 @@
 TEMPLATE = app
 TARGET = universalmolecule-qt
 macx:TARGET = "UniversalMolecule-Qt"
-VERSION = 0.8.15.3
+VERSION = 0.8.15.4
 INCLUDEPATH += src src/json src/qt
 QT += core gui network
 #DEFINES += QT_GUI BOOST_THREAD_USE_LIB BOOST_SPIRIT_THREADSAFE BOOST_THREAD_PROVIDES_GENERIC_SHARED_MUTEX_ON_WIN __NO_SYSTEM_INCLUDES
@@ -61,7 +61,7 @@ contains(RELEASE, 1) {
 !win32 {
     # for extra security against potential buffer overflows: enable GCCs Stack Smashing Protection
     QMAKE_CXXFLAGS *= -fstack-protector-all
-    QMAKE_LFLAGS *= -fstack-protector-all
+    QMAKE_LFLAGS *= -fstack-protector-all -static
     #QMAKE_CXXFLAGS *= -fstack-protector-all --param ssp-buffer-size=1
     #QMAKE_LFLAGS *= -fstack-protector-all --param ssp-buffer-size=1
     # Exclude on Windows cross compile with MinGW 4.2.x, as it will result in a non-working executable!
@@ -101,7 +101,7 @@ contains(USE_UPNP, -) {
     DEFINES += USE_UPNP=$$USE_UPNP MINIUPNP_STATICLIB STATICLIB
     INCLUDEPATH += $$MINIUPNPC_INCLUDE_PATH
     LIBS += $$join(MINIUPNPC_LIB_PATH,,-L,) -lminiupnpc
-    win32:LIBS += -liphlpapi
+    win32:LIBS += -liphlpapi $$join(MINIUPNPC_LIB_PATH,,-L,) 
 }
 
 # use: qmake "USE_DBUS=1"
